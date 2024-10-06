@@ -15,4 +15,4 @@ One worker is responsible for reading the file in chunks and sending each chunk 
 
 N consumers retrieve chunks from the `jobs` channel and calculate the statistics (count, min, max and sum of the chunk), sending it to the `result` channel.
 
-The main goroutine consumes the `result` and aggregates each chunk result and reports the final statistics.
+The main goroutine consumes the `result` and reduces each chunk result and reports the final statistics.
