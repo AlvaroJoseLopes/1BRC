@@ -1,4 +1,6 @@
 **/log.txt
 **/result.txt
+**/*.prof
+**/*.pdf
 measurements.txt
 test.txt
