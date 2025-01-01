@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
-	"log"
+	"log/slog"
 	"os"
 	"runtime"
 	"runtime/pprof"
@@ -32,11 +32,11 @@ func main() {
 	if *cpuprofile != "" {
         f, err := os.Create(*cpuprofile)
         if err != nil {
-            log.Fatal("could not create CPU profile: ", err)
+            slog.Error("could not create CPU profile", "error", err)
         }
         defer f.Close() // error handling omitted for example
         if err := pprof.StartCPUProfile(f); err != nil {
-            log.Fatal("could not start CPU profile: ", err)
+            slog.Error("could not start CPU profile", "error", err)
         }
         defer pprof.StopCPUProfile()
     }
@@ -45,17 +45,17 @@ func main() {
 	evaluate()
 	end := time.Now()
 	elapsed := end.Sub(start)
-	log.Printf("elapsed time: %v\n", elapsed)
+	slog.Info(fmt.Sprintf("elapsed time: %v\n", elapsed))
 
 	if *memprofile != "" {
         f, err := os.Create(*memprofile)
         if err != nil {
-            log.Fatal("could not create memory profile: ", err)
+            slog.Error("could not create memory profile: ", err)
         }
         defer f.Close() // error handling omitted for example
         runtime.GC() // get up-to-date statistics
         if err := pprof.WriteHeapProfile(f); err != nil {
-            log.Fatal("could not write memory profile: ", err)
+            slog.Error("could not write memory profile: ", err)
         }
     }
 
@@ -64,7 +64,7 @@ func main() {
 func evaluate() {
 	fp, err := os.Open(*file)
 	if err != nil {
-		log.Fatal("failed to open file: ", err)
+		slog.Error("failed to open file: ", err)
 	}
 	defer fp.Close()
 	scanner := bufio.NewScanner(fp)
@@ -76,13 +76,13 @@ func evaluate() {
 		line := scanner.Text()
 		tokens := strings.Split(line, ";")
 		if len(tokens) != 2 {
-			log.Fatal("unexpected number of tokens after splitting: ", len(tokens))
+			slog.Error("unexpected number of tokens after splitting", "n_tokens", len(tokens))
 		}
 
 		city := tokens[0]
 		temperature, err := strconv.ParseFloat(tokens[1], 64)
 		if err != nil {
-			log.Fatal("error when parsing the temperature: ", err)
+			slog.Error("error when parsing the temperature", "error", err)
 		}
 
 		summary, ok := summaryPerCity[city]
