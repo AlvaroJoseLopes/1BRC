@@ -15,9 +15,10 @@ evaluate IMPLEMENTATION_FOLDER:
   just run {{IMPLEMENTATION_FOLDER}} {{evaluate_file}}
 
 cpuprof IMPLEMENTATION_FOLDER:
-  go tool pprof {{IMPLEMENTATION_FOLDER}}/cpu.prof
+  go tool pprof -pdf {{IMPLEMENTATION_FOLDER}}/cpu.prof > {{IMPLEMENTATION_FOLDER}}/cpuprofile.pdf 
 
 memprof IMPLEMENTATION_FOLDER:
-  go tool pprof {{IMPLEMENTATION_FOLDER}}/mem.prof
+  go tool pprof -pdf {{IMPLEMENTATION_FOLDER}}/mem.prof > {{IMPLEMENTATION_FOLDER}}/memprofile.pdf 
+
 
 
