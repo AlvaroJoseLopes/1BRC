@@ -7,6 +7,8 @@ run IMPLEMENTATION_FOLDER FILE:
     --cpuprofile {{IMPLEMENTATION_FOLDER}}/cpu.prof \
     --memprofile {{IMPLEMENTATION_FOLDER}}/mem.prof \
     >  {{IMPLEMENTATION_FOLDER}}/result.txt
+  just cpuprof {{IMPLEMENTATION_FOLDER}}
+  just memprof {{IMPLEMENTATION_FOLDER}}
 
 test IMPLEMENTATION_FOLDER:
   just run {{IMPLEMENTATION_FOLDER}} {{test_file}}
