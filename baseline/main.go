@@ -64,7 +64,7 @@ func main() {
 func evaluate() {
 	fp, err := os.Open(*file)
 	if err != nil {
-		slog.Error("failed to open file: ", err)
+		slog.Error("failed to open file", "error", err)
 	}
 	defer fp.Close()
 	scanner := bufio.NewScanner(fp)
