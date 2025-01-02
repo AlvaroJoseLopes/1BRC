@@ -23,17 +23,21 @@ type CityData struct {
 	Sum 	float64
 }
 
-type FileReader struct {
-	fp *os.File
-}
+func Chunks(filename string, chunkSize int) iter.Seq2[[]byte, error] {
+	return func(yield func([]byte, error) bool) {
+		fp, err := os.Open(*file)
+		if err != nil {
+			slog.Error("failed to open file", "error", err)
+			yield(nil, err)
+			return
+		}
+		defer fp.Close()
 
-func (i *FileReader) Chunks(chunkSize int) iter.Seq[[]byte] {
-	return func(yield func([]byte) bool) {
 		buffer := make([]byte, chunkSize)
 		leftover := make([]byte, 0, chunkSize)
 		leftoverSize := 0
 		for {
-			sizeCurrentChunk, err := i.fp.Read(buffer)
+			sizeCurrentChunk, err := fp.Read(buffer)
 			if err != nil {
 				if err == io.EOF {
 					break
@@ -50,7 +54,7 @@ func (i *FileReader) Chunks(chunkSize int) iter.Seq[[]byte] {
 			leftover = make([]byte, leftoverSize)
 			copy(leftover, buffer[lastNewLineIndex+1:])
 			
-			if !yield(chunk) {
+			if !yield(chunk, nil) {
 				return
 			}
 		}
@@ -99,15 +103,12 @@ func main() {
 }
 
 func evaluate() {
-	fp, err := os.Open(*file)
-	if err != nil {
-		slog.Error("failed to open file", "error", err)
-	}
-	defer fp.Close()
-
 	finalCityData := make(map[string]*CityData)
-	data := FileReader{fp}
-	for chunk := range data.Chunks(chunkSize) {
+	for chunk, err := range Chunks(*file, chunkSize) {
+		if err != nil {
+			slog.Error("error getting chunk", "error", err)
+			return
+		}
 		partialData := processChunk(chunk)
 		for city, data := range partialData {
 			currentCityData, ok := finalCityData[city]
