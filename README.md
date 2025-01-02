@@ -7,6 +7,10 @@ Solution for [1BRC](https://github.com/gunnarmorling/1brc) (The One Billion Row 
 
 Simple solution that reads the lines sequentially and aggregate the result line by line (count, min, max and sum).
 
+## Iterators
+
+This solution uses iterators to yield chunks of data from the file and aggregates the final result chunk by chunk.
+
 ## Channels
 
 Solution that uses channels to implement MapReduce pattern.
